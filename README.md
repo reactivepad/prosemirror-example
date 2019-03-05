@@ -1,4 +1,49 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project is a demo of ProseMirror plugin combined with [Reactivepad](https://reactivepad.com) plugin. CodeSandbox: [https://codesandbox.io/s/34oyly2xl5](https://codesandbox.io/s/34oyly2xl5)
+
+It's basically a modified version of a basic ProseMirror example setup from official documentation https://prosemirror.net/examples/basic.
+
+To setup plugin:
+```javascript
+const {
+  buildPlugin,
+  nodes,
+  menuItems,
+  buildMenuDropdown
+} = window.ReactivepadProseMirror;
+
+
+// create a plugin
+const reactivepadPlugin = buildPlugin();
+
+// extend default editor schema with nodes from Reactivepad
+const editorSchema = new Schema({
+  nodes: addListNodes(schema.spec.nodes, "paragraph block*", "block").append(
+    nodes
+  ),
+  marks: schema.spec.marks
+});
+
+// add Reactivepad's dropdown to menubar
+const menu = buildMenuItems(editorSchema);
+menu.fullMenu.unshift([buildMenuDropdown(menuItems)]);
+
+// create ProseMirror editor instance with Reactivepad plugin
+new EditorView(this.editorRef, {
+    state: EditorState.create({
+      schema: editorSchema,
+      plugins: [
+        ...exampleSetup({
+	          schema: editorSchema,
+	          menuContent: menu.fullMenu
+		  }),
+       reactivepadPlugin.plugin
+	  ]
+    })
+  });
+}
+```
+
+Please refer to `src/Editor.js` file for more context.
 
 ## Available Scripts
 
